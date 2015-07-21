@@ -9,7 +9,7 @@
 	<md-card>
       <md-card-content>
         <h2 class="md-title">Select a destination type:</h2>
-       <md-select ng-model="filterType" md-on-open="ns.loadFilters()" style="min-width: 200px;">
+       <md-select ng-model="filterType" md-on-open="ns.loadFilters()">
 	      <md-select-label>{{ filterType ? filterType.name : 'select' }}</md-select-label>
 	      <md-option ng-value="filterType" ng-repeat="filterType in ns.filters">{{filterType.name}}</md-option>
 	    </md-select>
@@ -17,8 +17,6 @@
       
     </md-card>
 
-	<md-whiteframe class="md-whiteframe-z2" layout layout-align="center center">
-	    
-	  </md-whiteframe>
+	
 </md-content>
   

@@ -90,31 +90,210 @@ angular.module(moduleName, [_filterFilterController2['default'], _searchSearchCo
 exports['default'] = moduleName;
 module.exports = exports['default'];
 
-},{"./filter/filter.controller":1,"./map/map.controller":3,"./search/search.controller":4}],3:[function(require,module,exports){
+},{"./filter/filter.controller":1,"./map/map.controller":3,"./search/search.controller":5}],3:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
-    value: true
+				value: true
 });
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
-var moduleName = 'GoogleMapApp.findLocation.map';
+var _mapDirective = require('./map.directive');
+
+var _mapDirective2 = _interopRequireDefault(_mapDirective);
+
+var moduleName = 'GoogleMapApp.findLocation.mapctrl';
 
 var FindLocationMapController = function FindLocationMapController($scope, $stateParams, $state) {
-    _classCallCheck(this, FindLocationMapController);
+				_classCallCheck(this, FindLocationMapController);
 
-    console.log('running map ctrl..');
+				console.log('running map ctrl..');
 };
 
 FindLocationMapController.$inject = ['$scope', '$stateParams', '$state'];
 
-angular.module(moduleName, []).controller('findLocationMapController', FindLocationMapController);
+angular.module(moduleName, [_mapDirective2['default']]).controller('findLocationMapController', FindLocationMapController).directive('myMap1', function () {
+				// directive link function
+				var link = function link(scope, element, attrs) {
+								var map, infoWindow;
+								var markers = [];
+
+								// map config
+								var mapOptions = {
+												center: new google.maps.LatLng(50, 2),
+												zoom: 4,
+												mapTypeId: google.maps.MapTypeId.ROADMAP,
+												scrollwheel: false
+								};
+
+								// init the map
+								function initMap() {
+												if (map === void 0) {
+																map = new google.maps.Map(element[0], mapOptions);
+												}
+								}
+
+								// place a marker
+								function setMarker(map, position, title, content) {
+												var marker;
+												var markerOptions = {
+																position: position,
+																map: map,
+																title: title,
+																icon: 'https://maps.google.com/mapfiles/ms/icons/green-dot.png'
+												};
+
+												marker = new google.maps.Marker(markerOptions);
+												markers.push(marker); // add marker to array
+
+												google.maps.event.addListener(marker, 'click', function () {
+																// close window if not undefined
+																if (infoWindow !== void 0) {
+																				infoWindow.close();
+																}
+																// create new window
+																var infoWindowOptions = {
+																				content: content
+																};
+																infoWindow = new google.maps.InfoWindow(infoWindowOptions);
+																infoWindow.open(map, marker);
+												});
+								}
+
+								// show the map and place some markers
+								initMap();
+
+								setMarker(map, new google.maps.LatLng(51.508515, -0.125487), 'London', 'Just some content');
+								setMarker(map, new google.maps.LatLng(52.370216, 4.895168), 'Amsterdam', 'More content');
+								setMarker(map, new google.maps.LatLng(48.856614, 2.352222), 'Paris', 'Text here');
+				};
+
+				return {
+								restrict: 'A',
+								template: '<div id="gmaps"></div>',
+								replace: true,
+								link: link
+				};
+});
 
 exports['default'] = moduleName;
 module.exports = exports['default'];
 
-},{}],4:[function(require,module,exports){
+},{"./map.directive":4}],4:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, '__esModule', {
+				value: true
+});
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+var moduleName = 'GoogleMapApp.findLocation.mapdirective';
+
+var FindLocationMapDirective = (function () {
+				function FindLocationMapDirective($scope, $stateParams, $state) {
+								_classCallCheck(this, FindLocationMapDirective);
+
+								this.restrict = 'A';
+								this.replace = 'true';
+								this.template = '<div id="gmaps"></div>';
+				}
+
+				_createClass(FindLocationMapDirective, [{
+								key: 'link',
+
+								// directive link function
+								value: function link(scope, element, attrs) {
+
+												var map = undefined,
+												    infoWindow = undefined;
+												var markers = [];
+
+												var currentPosition = function currentPosition(position) {
+
+																var lat = position.coords.latitude;
+																var lon = position.coords.longitude;
+																var newPosition = new google.maps.LatLng(lat, lon);
+
+																setMarker(map, newPosition, 'MyLocation', 'I am here now!');
+																map.setZoom(8);
+																map.setCenter(newPosition);
+												};
+
+												// map config
+												var mapOptions = {
+																center: new google.maps.LatLng(50, 2),
+																zoom: 4,
+																mapTypeId: google.maps.MapTypeId.ROADMAP,
+																scrollwheel: false
+												};
+
+												// init the map
+												var initMap = function initMap() {
+																if (map === void 0) {
+																				map = new google.maps.Map(element[0], mapOptions);
+																				navigator.geolocation.getCurrentPosition(currentPosition);
+																}
+												};
+
+												// place a marker
+												var setMarker = function setMarker(map, position, title, content) {
+																var marker = undefined;
+																var markerOptions = {
+																				position: position,
+																				map: map,
+																				title: title,
+																				icon: 'https://maps.google.com/mapfiles/ms/icons/green-dot.png'
+																};
+
+																marker = new google.maps.Marker(markerOptions);
+																markers.push(marker); // add marker to array
+
+																google.maps.event.addListener(marker, 'click', function () {
+																				// close window if not undefined
+																				if (infoWindow !== void 0) {
+																								infoWindow.close();
+																				}
+
+																				// create new window
+																				var infoWindowOptions = {
+																								content: content
+																				};
+
+																				infoWindow = new google.maps.InfoWindow(infoWindowOptions);
+																				infoWindow.open(map, marker);
+																});
+												};
+
+												// show the map and place some markers
+												initMap();
+								}
+				}], [{
+								key: 'directiveFactory',
+								value: function directiveFactory() {
+												FindLocationMapDirective.instance = new FindLocationMapDirective();
+												return FindLocationMapDirective.instance;
+								}
+				}]);
+
+				return FindLocationMapDirective;
+})();
+
+FindLocationMapDirective.$inject = ['$scope', '$stateParams', '$state'];
+
+angular.module(moduleName, []).directive('findLocationMapDirective', FindLocationMapDirective.directiveFactory);
+
+;
+
+exports['default'] = moduleName;
+module.exports = exports['default'];
+
+},{}],5:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -138,7 +317,7 @@ angular.module(moduleName, []).controller('findLocationSearchController', FindLo
 exports['default'] = moduleName;
 module.exports = exports['default'];
 
-},{}],5:[function(require,module,exports){
+},{}],6:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -182,7 +361,7 @@ angular.module(moduleName, ['ngAnimate', 'ngAria', 'ngMaterial', 'ui.router', _f
 exports['default'] = moduleName;
 module.exports = exports['default'];
 
-},{"./find-location/find-location.state":2}],6:[function(require,module,exports){
+},{"./find-location/find-location.state":2}],7:[function(require,module,exports){
 'use strict';
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
@@ -193,4 +372,4 @@ var _googlemapApp2 = _interopRequireDefault(_googlemapApp);
 
 angular.bootstrap(document, [_googlemapApp2['default']]);
 
-},{"./googlemap-app":5}]},{},[6]);
+},{"./googlemap-app":6}]},{},[7]);

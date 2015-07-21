@@ -1,0 +1,8 @@
+body {
+	overflow-y: hidden !important;
+}
+
+#gmaps {
+    width: 100%;
+    height: 300px;
+}
