@@ -1,0 +1,10 @@
+{
+  "name": "googlemap-app",
+  "version": "0.0.1",
+  "dependencies": {},
+  "devDependencies": {
+    "angular": "~1.4.3",
+    "angular-material": "~0.10.0"
+  },
+  "appPath": "app"
+}
