@@ -1,0 +1,24 @@
+<!--
+	ng-model is needed by md-on-open directive.
+-->
+<md-toolbar layout="row">
+	<h1 class="md-toolbar-tools" layout-align-gt-sm="center">Xebia Assessment - Google Maps App</h1>
+</md-toolbar>
+
+<md-content class="md-padding">
+	<md-card>
+      <md-card-content>
+        <h2 class="md-title">Select a destination type:</h2>
+       <md-select ng-model="filterType" md-on-open="ns.loadFilters()" style="min-width: 200px;">
+	      <md-select-label>{{ filterType ? filterType.name : 'select' }}</md-select-label>
+	      <md-option ng-value="filterType" ng-repeat="filterType in ns.filters">{{filterType.name}}</md-option>
+	    </md-select>
+      </md-card-content>
+      
+    </md-card>
+
+	<md-whiteframe class="md-whiteframe-z2" layout layout-align="center center">
+	    
+	  </md-whiteframe>
+</md-content>
+  
