@@ -11,12 +11,9 @@
         <h2 class="md-title">Select a destination type:</h2>
        <md-select ng-model="filterType" md-on-open="ns.loadFilters()">
 	      <md-select-label>{{ filterType ? filterType.name : 'select' }}</md-select-label>
-	      <md-option ng-value="filterType" ng-repeat="filterType in ns.filters">{{filterType.name}}</md-option>
+	      <md-option ng-click="ns.checkValue(filterType)" ng-value="filterType" ng-repeat="filterType in ns.filters">{{filterType.name}}</md-option>
 	    </md-select>
       </md-card-content>
-      
     </md-card>
-
-	
 </md-content>
   

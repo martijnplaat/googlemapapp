@@ -137,7 +137,6 @@ gulp.task('dev', ['devpipe', 'jshint', 'csslint', 'watch'], function() {
     });
 
     gulp.task('watch', function() {
-
         gulp.watch([
             './scripts/**/*.js',
             '!./scripts/bundled.js',

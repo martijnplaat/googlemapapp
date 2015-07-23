@@ -22,7 +22,8 @@ angular.module(moduleName, [
 
 // We start with an abstract root state if we need specific overall data in our child states.
 
-.config(['$stateProvider','$urlRouterProvider', ($stateProvider, $urlRouterProvider) => {
+.config(['$stateProvider','$urlRouterProvider', '$httpProvider', ($stateProvider, $urlRouterProvider, $httpProvider) => {
+        
         $stateProvider
             .state('root', {
                 url: '',
@@ -36,7 +37,8 @@ angular.module(moduleName, [
 
 .run(['$rootScope', '$stateParams', '$state', ($rootScope, $stateParams, $state) => {
 	
-    console.log("running googlemap-app abstract state..");
+    $rootScope.selectedFilterType = null;
+
 }])
 
 ;

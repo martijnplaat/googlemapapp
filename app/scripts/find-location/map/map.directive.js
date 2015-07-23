@@ -6,7 +6,7 @@ class FindLocationMapDirective {
 
     	this.restrict = 'A';
         this.replace = 'true';
-        this.template = '<div id="gmaps"></div>';
+        this.template = '<div class="gmaps"></div>';
 
     }
 
@@ -16,6 +16,22 @@ class FindLocationMapDirective {
 	        let map, infoWindow;
 	        let markers = [];
 	        
+	        // init the map
+	        let initMap = () => {
+	            if (map === void 0) {
+	                map = new google.maps.Map(element[0], mapOptions);
+	                navigator.geolocation.getCurrentPosition(currentPosition);
+	            }
+	        }  
+
+	        // map config
+	        let mapOptions = {
+	            center: new google.maps.LatLng(50, 2),
+	            zoom: 4,
+	            mapTypeId: google.maps.MapTypeId.ROADMAP,
+	            scrollwheel: false
+	        };
+
 			let currentPosition = (position) => {
          
 		        let lat = position.coords.latitude;
@@ -28,21 +44,6 @@ class FindLocationMapDirective {
 
       		};
 
-	        // map config
-	        let mapOptions = {
-	            center: new google.maps.LatLng(50, 2),
-	            zoom: 4,
-	            mapTypeId: google.maps.MapTypeId.ROADMAP,
-	            scrollwheel: false
-	        };
-	        
-			// init the map
-	        let initMap = () => {
-	            if (map === void 0) {
-	                map = new google.maps.Map(element[0], mapOptions);
-	                navigator.geolocation.getCurrentPosition(currentPosition);
-	            }
-	        }    
 	        
 	        // place a marker
 	        let setMarker = (map, position, title, content) => {
@@ -82,7 +83,6 @@ class FindLocationMapDirective {
         FindLocationMapDirective.instance = new FindLocationMapDirective();
         return FindLocationMapDirective.instance;
     }
-
 
 }
 

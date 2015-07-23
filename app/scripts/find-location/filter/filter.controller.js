@@ -1,27 +1,30 @@
+import { default as GoogleMapAppConfig } from '../../general/config.constant';
+
 const moduleName = 'GoogleMapApp.findLocation.filter';
+const ROOTSCOPE = new WeakMap();
+const CONFIG = new WeakMap();
 
 class FindLocationFilterController {
 
-    constructor($scope, $stateParams, $state) {
-    		
+    constructor($rootScope, $stateParams, $state, config) {
+        ROOTSCOPE.set(this, $rootScope);
+        CONFIG.set(this, config);
+    }
+
+    checkValue(filterType) {
+        ROOTSCOPE.get(this).selectedFilterType = filterType.name;
     }
 
     loadFilters() {
-    	
-    	this.filters = [
-		        { id: 1, name: 'Cities' },
-		        { id: 2, name: 'Streets' },
-		        { id: 3, name: 'Stations' },
-		        { id: 4, name: 'Places' }
-      		];
+    	this.filters = CONFIG.get(this).filters;
     }
 
 }
 
-FindLocationFilterController.$inject = ['$scope', '$stateParams', '$state'];
+FindLocationFilterController.$inject = ['$rootScope', '$stateParams', '$state', 'config'];
 
 angular.module(moduleName, [
-    
+    GoogleMapAppConfig
 ])
     .controller('findLocationFilterController', FindLocationFilterController);
 

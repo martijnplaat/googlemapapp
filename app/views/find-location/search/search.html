@@ -1,27 +1,32 @@
 <md-content class="md-padding">
 	
-    <form ng-submit="$event.preventDefault()">
+    
       <md-autocomplete
-          ng-disabled="ctrl.isDisabled"
-          md-no-cache="ctrl.noCache"
-          md-selected-item="ctrl.selectedItem"
-          md-search-text-change="ctrl.searchTextChange(ctrl.searchText)"
-          md-search-text="ctrl.searchText"
-          md-selected-item-change="ctrl.selectedItemChange(item)"
-          md-items="item in ctrl.querySearch(ctrl.searchText)"
-          md-item-text="item.display"
-          md-min-length="0"
+          ng-disabled="ns.isDisabled"
+          md-no-cache="ns.noCache"
+          md-search-text="ns.searchText"
+          md-search-text-change=""
+          md-selected-item=""
+          md-selected-item-change="ns.selectedItemChange(item)"
+          md-items="item in ns.querySearch(ns.searchText)"
+          md-item-text="item.name"
+          md-min-length="3"
           placeholder="What is your destination address?">
+
         <md-item-template>
-          <span md-highlight-text="ctrl.searchText" md-highlight-flags="^i">{{item.display}}</span>
+          <span md-highlight-text="ns.searchText" md-highlight-flags="^i">{{item.name}}</span>
         </md-item-template>
+
         <md-not-found>
-          No matches found for "{{ctrl.searchText}}".
+          No matches found for "{{ns.searchText}}".
         </md-not-found>
+
       </md-autocomplete>
+
+      
       <br/>
       
       <!-- By default, <code>md-autocomplete</code> will cache results when performing a query.  After the initial call is performed, it will use the cached results to eliminate unnecessary server requests or lookup logic. This can be disabled above. -->
-    </form>
+    
  
 </md-content>
