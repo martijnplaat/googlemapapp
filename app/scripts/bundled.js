@@ -49,7 +49,7 @@ angular.module(moduleName, [_generalConfigConstant2['default']]).controller('fin
 exports['default'] = moduleName;
 module.exports = exports['default'];
 
-},{"../../general/config.constant":7}],2:[function(require,module,exports){
+},{"../../general/config.constant":8}],2:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -105,7 +105,7 @@ angular.module(moduleName, [_filterFilterController2['default'], _searchSearchCo
 exports['default'] = moduleName;
 module.exports = exports['default'];
 
-},{"./filter/filter.controller":1,"./map/map.controller":3,"./search/search.controller":6}],3:[function(require,module,exports){
+},{"./filter/filter.controller":1,"./map/map.controller":3,"./search/search.controller":7}],3:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -120,7 +120,7 @@ var _mapDirective = require('./map.directive');
 
 var _mapDirective2 = _interopRequireDefault(_mapDirective);
 
-var moduleName = 'GoogleMapApp.findLocation.mapctrl';
+var moduleName = 'GoogleMapApp.findLocation.mapcontroller';
 
 var FindLocationMapController = function FindLocationMapController($scope, $stateParams, $state) {
     _classCallCheck(this, FindLocationMapController);
@@ -139,114 +139,160 @@ module.exports = exports['default'];
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
-				value: true
+    value: true
 });
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
+var _mapFactory = require('./map.factory');
+
+var _mapFactory2 = _interopRequireDefault(_mapFactory);
+
 var moduleName = 'GoogleMapApp.findLocation.mapdirective';
+var MAPFACTORY = new WeakMap();
 
 var FindLocationMapDirective = (function () {
-				function FindLocationMapDirective($scope, $stateParams, $state) {
-								_classCallCheck(this, FindLocationMapDirective);
+    function FindLocationMapDirective($scope, $stateParams, $state, findLocationMapFactory) {
+        _classCallCheck(this, FindLocationMapDirective);
 
-								this.restrict = 'A';
-								this.replace = 'true';
-								this.template = '<div class="gmaps"></div>';
-				}
+        this.restrict = 'A';
+        this.replace = 'true';
+        this.template = '<div class="gmaps"></div>';
 
-				_createClass(FindLocationMapDirective, [{
-								key: 'link',
+        MAPFACTORY.set(this, findLocationMapFactory);
+    }
 
-								// directive link function
-								value: function link(scope, element, attrs) {
+    _createClass(FindLocationMapDirective, [{
+        key: 'link',
 
-												var map = undefined,
-												    infoWindow = undefined;
-												var markers = [];
+        // directive link function
+        value: function link(scope, element, attrs) {
 
-												// init the map
-												var initMap = function initMap() {
-																if (map === void 0) {
-																				map = new google.maps.Map(element[0], mapOptions);
-																				navigator.geolocation.getCurrentPosition(currentPosition);
-																}
-												};
+            MAPFACTORY.get(this).initMap(element[0]);
+        }
+    }], [{
+        key: 'directiveFactory',
+        value: function directiveFactory() {
+            FindLocationMapDirective.instance = new FindLocationMapDirective();
+            return FindLocationMapDirective.instance;
+        }
+    }]);
 
-												// map config
-												var mapOptions = {
-																center: new google.maps.LatLng(50, 2),
-																zoom: 4,
-																mapTypeId: google.maps.MapTypeId.ROADMAP,
-																scrollwheel: false
-												};
-
-												var currentPosition = function currentPosition(position) {
-
-																var lat = position.coords.latitude;
-																var lon = position.coords.longitude;
-																var newPosition = new google.maps.LatLng(lat, lon);
-
-																setMarker(map, newPosition, 'MyLocation', 'I am here now!');
-																map.setZoom(8);
-																map.setCenter(newPosition);
-												};
-
-												// place a marker
-												var setMarker = function setMarker(map, position, title, content) {
-																var marker = undefined;
-																var markerOptions = {
-																				position: position,
-																				map: map,
-																				title: title,
-																				icon: 'https://maps.google.com/mapfiles/ms/icons/green-dot.png'
-																};
-
-																marker = new google.maps.Marker(markerOptions);
-																markers.push(marker); // add marker to array
-
-																google.maps.event.addListener(marker, 'click', function () {
-																				// close window if not undefined
-																				if (infoWindow !== void 0) {
-																								infoWindow.close();
-																				}
-
-																				// create new window
-																				var infoWindowOptions = {
-																								content: content
-																				};
-
-																				infoWindow = new google.maps.InfoWindow(infoWindowOptions);
-																				infoWindow.open(map, marker);
-																});
-												};
-
-												// show the map and place some markers
-												initMap();
-								}
-				}], [{
-								key: 'directiveFactory',
-								value: function directiveFactory() {
-												FindLocationMapDirective.instance = new FindLocationMapDirective();
-												return FindLocationMapDirective.instance;
-								}
-				}]);
-
-				return FindLocationMapDirective;
+    return FindLocationMapDirective;
 })();
 
-FindLocationMapDirective.$inject = ['$scope', '$stateParams', '$state'];
+FindLocationMapDirective.$inject = ['$scope', '$stateParams', '$state', 'findLocationMapFactory'];
 
-angular.module(moduleName, []).directive('findLocationMapDirective', FindLocationMapDirective.directiveFactory);
+angular.module(moduleName, [_mapFactory2['default']]).directive('findLocationMapDirective', FindLocationMapDirective.directiveFactory);
 
 ;
 
 exports['default'] = moduleName;
 module.exports = exports['default'];
 
-},{}],5:[function(require,module,exports){
+},{"./map.factory":5}],5:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, '__esModule', {
+    value: true
+});
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+var moduleName = 'GoogleMapApp.findLocation.mapfactory';
+
+var FindLocationMapFactory = (function () {
+    function FindLocationMapFactory() {
+        _classCallCheck(this, FindLocationMapFactory);
+    }
+
+    _createClass(FindLocationMapFactory, [{
+        key: 'initMap',
+
+        // init the map
+        value: function initMap(activeElement) {
+
+            // map config
+            var mapOptions = {
+                center: new google.maps.LatLng(50, 2),
+                zoom: 4,
+                mapTypeId: google.maps.MapTypeId.ROADMAP,
+                scrollwheel: false
+            };
+
+            if (this.map === void 0) {
+                this.map = new google.maps.Map(activeElement, mapOptions);
+                navigator.geolocation.getCurrentPosition(this.currentPosition);
+            }
+        }
+    }, {
+        key: 'currentPosition',
+        value: function currentPosition(position) {
+
+            var lat = position.coords.latitude;
+            var lon = position.coords.longitude;
+            var newPosition = new google.maps.LatLng(lat, lon);
+
+            this.setMarker(this.map, newPosition, 'MyLocation', 'I am here now!');
+            this.map.setZoom(8);
+            this.map.setCenter(newPosition);
+        }
+    }, {
+        key: 'setMarker',
+
+        // place a marker
+        value: function setMarker(map, position, title, content) {
+            var marker = undefined,
+                infoWindow = undefined;
+            var markerOptions = {
+                position: position,
+                map: map,
+                title: title,
+                icon: 'https://maps.google.com/mapfiles/ms/icons/green-dot.png'
+            };
+
+            marker = new google.maps.Marker(markerOptions);
+            this.markers.push(marker); // add marker to array
+
+            google.maps.event.addListener(marker, 'click', function () {
+                // close window if not undefined
+                if (infoWindow !== void 0) {
+                    infoWindow.close();
+                }
+
+                // create new window
+                var infoWindowOptions = {
+                    content: content
+                };
+
+                infoWindow = new google.maps.InfoWindow(infoWindowOptions);
+                infoWindow.open(map, marker);
+            });
+        }
+    }], [{
+        key: 'FindLocationMapFactoryInstance',
+        value: function FindLocationMapFactoryInstance() {
+            return new FindLocationMapFactory();
+        }
+    }]);
+
+    return FindLocationMapFactory;
+})();
+
+FindLocationMapFactory.FindLocationMapFactoryInstance.$inject = [];
+
+angular.module(moduleName, []).factory('findLocationMapFactory', FindLocationMapFactory.FindLocationMapFactoryInstance);
+
+exports['default'] = moduleName;
+module.exports = exports['default'];
+
+},{}],6:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -267,15 +313,13 @@ var moduleName = 'GoogleMapApp.findLocation.API';
 
 var HTTP = new WeakMap();
 var CONFIG = new WeakMap();
-var LOCATION = new WeakMap();
 
 var FindLocationAPIFactory = (function () {
-    function FindLocationAPIFactory($http, config, $location) {
+    function FindLocationAPIFactory($http, config) {
         _classCallCheck(this, FindLocationAPIFactory);
 
         HTTP.set(this, $http);
         CONFIG.set(this, config);
-        LOCATION.set(this, $location);
     }
 
     _createClass(FindLocationAPIFactory, [{
@@ -295,22 +339,22 @@ var FindLocationAPIFactory = (function () {
         }
     }], [{
         key: 'FindLocationAPIFactoryInstance',
-        value: function FindLocationAPIFactoryInstance($http, config, $location) {
-            return new FindLocationAPIFactory($http, config, $location);
+        value: function FindLocationAPIFactoryInstance($http, config) {
+            return new FindLocationAPIFactory($http, config);
         }
     }]);
 
     return FindLocationAPIFactory;
 })();
 
-FindLocationAPIFactory.FindLocationAPIFactoryInstance.$inject = ['$http', 'config', '$location'];
+FindLocationAPIFactory.FindLocationAPIFactoryInstance.$inject = ['$http', 'config'];
 
 angular.module(moduleName, [_generalConfigConstant2['default']]).factory('findLocationAPIFactory', FindLocationAPIFactory.FindLocationAPIFactoryInstance);
 
 exports['default'] = moduleName;
 module.exports = exports['default'];
 
-},{"../../general/config.constant":7}],6:[function(require,module,exports){
+},{"../../general/config.constant":8}],7:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -379,7 +423,7 @@ angular.module(moduleName, [_findlocationapiFactory2['default']]).controller('fi
 exports['default'] = moduleName;
 module.exports = exports['default'];
 
-},{"./findlocationapi.factory":5}],7:[function(require,module,exports){
+},{"./findlocationapi.factory":6}],8:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -397,7 +441,7 @@ angular.module(moduleName, []).constant('config', {
 exports['default'] = moduleName;
 module.exports = exports['default'];
 
-},{}],8:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -442,7 +486,7 @@ angular.module(moduleName, ['ngAnimate', 'ngAria', 'ngMaterial', 'ui.router', _f
 exports['default'] = moduleName;
 module.exports = exports['default'];
 
-},{"./find-location/find-location.state":2}],9:[function(require,module,exports){
+},{"./find-location/find-location.state":2}],10:[function(require,module,exports){
 'use strict';
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
@@ -453,4 +497,4 @@ var _googlemapApp2 = _interopRequireDefault(_googlemapApp);
 
 angular.bootstrap(document, [_googlemapApp2['default']]);
 
-},{"./googlemap-app":8}]},{},[9]);
+},{"./googlemap-app":9}]},{},[10]);

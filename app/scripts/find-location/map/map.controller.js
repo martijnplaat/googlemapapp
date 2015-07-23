@@ -1,6 +1,6 @@
 import { default as GoogleMapAppFindLocationMapDirective } from './map.directive';
 
-const moduleName = 'GoogleMapApp.findLocation.mapctrl';
+const moduleName = 'GoogleMapApp.findLocation.mapcontroller';
 
 class FindLocationMapController {
 

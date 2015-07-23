@@ -4,14 +4,12 @@ const moduleName = 'GoogleMapApp.findLocation.API';
 
 const HTTP = new WeakMap();
 const CONFIG = new WeakMap();
-const LOCATION = new WeakMap();
 
 class FindLocationAPIFactory {
 
-    constructor($http,config, $location) {
+    constructor($http,config) {
         HTTP.set(this, $http);
         CONFIG.set(this, config);
-        LOCATION.set(this, $location);
     }
 
     getlocations(filtertype, query) {
@@ -30,12 +28,12 @@ class FindLocationAPIFactory {
         return promise;
     }
 
-    static FindLocationAPIFactoryInstance($http, config, $location) {
-        return new FindLocationAPIFactory($http, config, $location);
+    static FindLocationAPIFactoryInstance($http, config) {
+        return new FindLocationAPIFactory($http, config);
     }
 }
 
-FindLocationAPIFactory.FindLocationAPIFactoryInstance.$inject = ['$http','config', '$location'];
+FindLocationAPIFactory.FindLocationAPIFactoryInstance.$inject = ['$http','config'];
 
 angular.module(moduleName, [
     GoogleMapAppConfig
