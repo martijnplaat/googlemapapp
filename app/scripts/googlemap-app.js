@@ -3,14 +3,10 @@ import { default as GoogleMapAppFindLocationState } from './find-location/find-l
 const moduleName = 'GoogleMapApp';
 
 class GoogleMapApp {
-	
-	constructor() {
-
-	}
-
+	constructor() {}
 }
 
-GoogleMapApp.$inject = ['$rootScope', '$stateParams', '$state'];
+GoogleMapApp.$inject = ['$rootScope'];
 
 angular.module(moduleName, [
     'ngAnimate',
@@ -21,21 +17,20 @@ angular.module(moduleName, [
 ])
 
 // We start with an abstract root state if we need specific overall data in our child states.
-
-.config(['$stateProvider','$urlRouterProvider', '$httpProvider', ($stateProvider, $urlRouterProvider, $httpProvider) => {
+.config(['$stateProvider','$urlRouterProvider', ($stateProvider, $urlRouterProvider) => {
         
-        $stateProvider
-            .state('root', {
-                url: '',
-                abstract: true
-            })
-        ;
+    $stateProvider
+        .state('root', {
+            url: '',
+            abstract: true
+        })
+    ;
 
-        $urlRouterProvider.otherwise('/');
+    $urlRouterProvider.otherwise('/');
        
-    }])
+}])
 
-.run(['$rootScope', '$stateParams', '$state', ($rootScope, $stateParams, $state) => {
+.run(['$rootScope', ($rootScope) => {
 	
     $rootScope.selectedFilterType = null;
 
@@ -44,5 +39,4 @@ angular.module(moduleName, [
 ;
 
 // export is mandatory if you want to import this module elsewhere
-
 export default moduleName;

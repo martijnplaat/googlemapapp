@@ -20,7 +20,7 @@ var ROOTSCOPE = new WeakMap();
 var CONFIG = new WeakMap();
 
 var FindLocationFilterController = (function () {
-    function FindLocationFilterController($rootScope, $stateParams, $state, config) {
+    function FindLocationFilterController($rootScope, config) {
         _classCallCheck(this, FindLocationFilterController);
 
         ROOTSCOPE.set(this, $rootScope);
@@ -42,7 +42,7 @@ var FindLocationFilterController = (function () {
     return FindLocationFilterController;
 })();
 
-FindLocationFilterController.$inject = ['$rootScope', '$stateParams', '$state', 'config'];
+FindLocationFilterController.$inject = ['$rootScope', 'config'];
 
 angular.module(moduleName, [_generalConfigConstant2['default']]).controller('findLocationFilterController', FindLocationFilterController);
 
@@ -122,13 +122,9 @@ var _mapDirective2 = _interopRequireDefault(_mapDirective);
 
 var moduleName = 'GoogleMapApp.findLocation.mapcontroller';
 
-var FindLocationMapController = function FindLocationMapController($scope, $stateParams, $state) {
+var FindLocationMapController = function FindLocationMapController() {
     _classCallCheck(this, FindLocationMapController);
-
-    console.log('running map ctrl..');
 };
-
-FindLocationMapController.$inject = ['$scope', '$stateParams', '$state'];
 
 angular.module(moduleName, [_mapDirective2['default']]).controller('findLocationMapController', FindLocationMapController);
 
@@ -156,14 +152,14 @@ var moduleName = 'GoogleMapApp.findLocation.mapdirective';
 var MAPFACTORY = new WeakMap();
 
 var FindLocationMapDirective = (function () {
-    function FindLocationMapDirective($scope, $stateParams, $state, findLocationMapFactory) {
+    function FindLocationMapDirective(findLocationMapFactory) {
         _classCallCheck(this, FindLocationMapDirective);
 
         this.restrict = 'A';
         this.replace = 'true';
         this.template = '<div class="gmaps"></div>';
 
-        MAPFACTORY.set(this, findLocationMapFactory);
+        this.mapfactory = findLocationMapFactory;
     }
 
     _createClass(FindLocationMapDirective, [{
@@ -171,13 +167,12 @@ var FindLocationMapDirective = (function () {
 
         // directive link function
         value: function link(scope, element, attrs) {
-
-            MAPFACTORY.get(this).initMap(element[0]);
+            FindLocationMapDirective.instance.mapfactory.initMap(element[0]);
         }
     }], [{
         key: 'directiveFactory',
-        value: function directiveFactory() {
-            FindLocationMapDirective.instance = new FindLocationMapDirective();
+        value: function directiveFactory(findLocationMapFactory) {
+            FindLocationMapDirective.instance = new FindLocationMapDirective(findLocationMapFactory);
             return FindLocationMapDirective.instance;
         }
     }]);
@@ -185,11 +180,9 @@ var FindLocationMapDirective = (function () {
     return FindLocationMapDirective;
 })();
 
-FindLocationMapDirective.$inject = ['$scope', '$stateParams', '$state', 'findLocationMapFactory'];
+FindLocationMapDirective.$inject = ['findLocationMapFactory'];
 
 angular.module(moduleName, [_mapFactory2['default']]).directive('findLocationMapDirective', FindLocationMapDirective.directiveFactory);
-
-;
 
 exports['default'] = moduleName;
 module.exports = exports['default'];
@@ -210,6 +203,8 @@ var moduleName = 'GoogleMapApp.findLocation.mapfactory';
 var FindLocationMapFactory = (function () {
     function FindLocationMapFactory() {
         _classCallCheck(this, FindLocationMapFactory);
+
+        this.markers = [];
     }
 
     _createClass(FindLocationMapFactory, [{
@@ -226,39 +221,38 @@ var FindLocationMapFactory = (function () {
                 scrollwheel: false
             };
 
-            if (this.map === void 0) {
-                this.map = new google.maps.Map(activeElement, mapOptions);
-                navigator.geolocation.getCurrentPosition(this.currentPosition);
+            if (FindLocationMapFactory.instance.map === void 0) {
+                FindLocationMapFactory.instance.map = new google.maps.Map(activeElement, mapOptions);
+                navigator.geolocation.getCurrentPosition(FindLocationMapFactory.instance.currentPosition);
             }
         }
     }, {
         key: 'currentPosition',
         value: function currentPosition(position) {
-
             var lat = position.coords.latitude;
             var lon = position.coords.longitude;
             var newPosition = new google.maps.LatLng(lat, lon);
 
-            this.setMarker(this.map, newPosition, 'MyLocation', 'I am here now!');
-            this.map.setZoom(8);
-            this.map.setCenter(newPosition);
+            FindLocationMapFactory.instance.setMarker(newPosition, 'MyLocation', 'I am here now!', 'https://maps.google.com/mapfiles/ms/icons/green-dot.png');
+            FindLocationMapFactory.instance.map.setZoom(8);
+            FindLocationMapFactory.instance.map.setCenter(newPosition);
         }
     }, {
         key: 'setMarker',
 
         // place a marker
-        value: function setMarker(map, position, title, content) {
+        value: function setMarker(position, title, content, icon) {
             var marker = undefined,
                 infoWindow = undefined;
             var markerOptions = {
                 position: position,
-                map: map,
+                map: FindLocationMapFactory.instance.map,
                 title: title,
-                icon: 'https://maps.google.com/mapfiles/ms/icons/green-dot.png'
+                icon: icon
             };
 
             marker = new google.maps.Marker(markerOptions);
-            this.markers.push(marker); // add marker to array
+            FindLocationMapFactory.instance.markers.push(marker); // add marker to array
 
             google.maps.event.addListener(marker, 'click', function () {
                 // close window if not undefined
@@ -272,20 +266,19 @@ var FindLocationMapFactory = (function () {
                 };
 
                 infoWindow = new google.maps.InfoWindow(infoWindowOptions);
-                infoWindow.open(map, marker);
+                infoWindow.open(FindLocationMapFactory.instance.map, marker);
             });
         }
     }], [{
         key: 'FindLocationMapFactoryInstance',
         value: function FindLocationMapFactoryInstance() {
-            return new FindLocationMapFactory();
+            FindLocationMapFactory.instance = new FindLocationMapFactory();
+            return FindLocationMapFactory.instance;
         }
     }]);
 
     return FindLocationMapFactory;
 })();
-
-FindLocationMapFactory.FindLocationMapFactoryInstance.$inject = [];
 
 angular.module(moduleName, []).factory('findLocationMapFactory', FindLocationMapFactory.FindLocationMapFactoryInstance);
 
@@ -371,13 +364,18 @@ var _findlocationapiFactory = require('./findlocationapi.factory');
 
 var _findlocationapiFactory2 = _interopRequireDefault(_findlocationapiFactory);
 
+var _mapMapFactory = require('../map/map.factory');
+
+var _mapMapFactory2 = _interopRequireDefault(_mapMapFactory);
+
 var moduleName = 'GoogleMapApp.findLocation.search';
 var API = new WeakMap();
 var ROOTSCOPE = new WeakMap();
 var Q = new WeakMap();
+var MAPFACTORY = new WeakMap();
 
 var FindLocationSearchController = (function () {
-    function FindLocationSearchController($rootScope, $stateParams, $state, findLocationAPIFactory, $q) {
+    function FindLocationSearchController($rootScope, findLocationAPIFactory, $q, findLocationMapFactory) {
         _classCallCheck(this, FindLocationSearchController);
 
         this.isDisabled = false;
@@ -386,12 +384,14 @@ var FindLocationSearchController = (function () {
         ROOTSCOPE.set(this, $rootScope);
         API.set(this, findLocationAPIFactory);
         Q.set(this, $q);
+        MAPFACTORY.set(this, findLocationMapFactory);
     }
 
     _createClass(FindLocationSearchController, [{
         key: 'selectedItemChange',
         value: function selectedItemChange(item) {
-            console.log(JSON.stringify(item));
+            var newPosition = new google.maps.LatLng(item.lat, item.lng);
+            MAPFACTORY.get(this).setMarker(newPosition, 'MyDestination', item.name, 'https://maps.google.com/mapfiles/ms/icons/blue-dot.png');
         }
     }, {
         key: 'querySearch',
@@ -416,14 +416,14 @@ var FindLocationSearchController = (function () {
     return FindLocationSearchController;
 })();
 
-FindLocationSearchController.$inject = ['$rootScope', '$stateParams', '$state', 'findLocationAPIFactory', '$q'];
+FindLocationSearchController.$inject = ['$rootScope', 'findLocationAPIFactory', '$q', 'findLocationMapFactory'];
 
-angular.module(moduleName, [_findlocationapiFactory2['default']]).controller('findLocationSearchController', FindLocationSearchController);
+angular.module(moduleName, [_findlocationapiFactory2['default'], _mapMapFactory2['default']]).controller('findLocationSearchController', FindLocationSearchController);
 
 exports['default'] = moduleName;
 module.exports = exports['default'];
 
-},{"./findlocationapi.factory":6}],8:[function(require,module,exports){
+},{"../map/map.factory":5,"./findlocationapi.factory":6}],8:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -462,13 +462,12 @@ var GoogleMapApp = function GoogleMapApp() {
     _classCallCheck(this, GoogleMapApp);
 };
 
-GoogleMapApp.$inject = ['$rootScope', '$stateParams', '$state'];
+GoogleMapApp.$inject = ['$rootScope'];
 
 angular.module(moduleName, ['ngAnimate', 'ngAria', 'ngMaterial', 'ui.router', _findLocationFindLocationState2['default']])
 
 // We start with an abstract root state if we need specific overall data in our child states.
-
-.config(['$stateProvider', '$urlRouterProvider', '$httpProvider', function ($stateProvider, $urlRouterProvider, $httpProvider) {
+.config(['$stateProvider', '$urlRouterProvider', function ($stateProvider, $urlRouterProvider) {
 
     $stateProvider.state('root', {
         url: '',
@@ -476,13 +475,12 @@ angular.module(moduleName, ['ngAnimate', 'ngAria', 'ngMaterial', 'ui.router', _f
     });
 
     $urlRouterProvider.otherwise('/');
-}]).run(['$rootScope', '$stateParams', '$state', function ($rootScope, $stateParams, $state) {
+}]).run(['$rootScope', function ($rootScope) {
 
     $rootScope.selectedFilterType = null;
 }]);
 
 // export is mandatory if you want to import this module elsewhere
-
 exports['default'] = moduleName;
 module.exports = exports['default'];
 

@@ -3,14 +3,8 @@ import { default as GoogleMapAppFindLocationMapDirective } from './map.directive
 const moduleName = 'GoogleMapApp.findLocation.mapcontroller';
 
 class FindLocationMapController {
-
-    constructor($scope, $stateParams, $state) {
-    	console.log('running map ctrl..');
-    }
-
+    constructor() { }
 }
-
-FindLocationMapController.$inject = ['$scope', '$stateParams', '$state'];
 
 angular.module(moduleName, [
     GoogleMapAppFindLocationMapDirective

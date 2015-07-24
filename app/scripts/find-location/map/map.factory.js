@@ -2,7 +2,9 @@ const moduleName = 'GoogleMapApp.findLocation.mapfactory';
 
 class FindLocationMapFactory {
 
-    constructor() { }
+    constructor() {
+        this.markers = [];
+    }
 
     // init the map
     initMap(activeElement) {
@@ -15,37 +17,34 @@ class FindLocationMapFactory {
             scrollwheel: false
         };
 
-        if (this.map === void 0) {
-            this.map = new google.maps.Map(activeElement, mapOptions);
-            navigator.geolocation.getCurrentPosition(this.currentPosition);
+        if (FindLocationMapFactory.instance.map === void 0) {
+            FindLocationMapFactory.instance.map = new google.maps.Map(activeElement, mapOptions);
+            navigator.geolocation.getCurrentPosition(FindLocationMapFactory.instance.currentPosition);
         }
     }
 
     currentPosition(position) {
-         
-                let lat = position.coords.latitude;
-                let lon = position.coords.longitude;
-                let newPosition = new google.maps.LatLng(lat, lon);
+        let lat = position.coords.latitude;
+        let lon = position.coords.longitude;
+        let newPosition = new google.maps.LatLng(lat, lon);
 
-                this.setMarker(this.map, newPosition, 'MyLocation', 'I am here now!');
-                this.map.setZoom(8);
-                this.map.setCenter(newPosition);
-
+        FindLocationMapFactory.instance.setMarker(newPosition, 'MyLocation', 'I am here now!', 'https://maps.google.com/mapfiles/ms/icons/green-dot.png');
+        FindLocationMapFactory.instance.map.setZoom(8);
+        FindLocationMapFactory.instance.map.setCenter(newPosition);
     };
-
-            
+     
     // place a marker
-    setMarker(map, position, title, content) {
+    setMarker(position, title, content, icon) {
         let marker, infoWindow;
         let markerOptions = {
             position: position,
-            map: map,
+            map: FindLocationMapFactory.instance.map,
             title: title,
-            icon: 'https://maps.google.com/mapfiles/ms/icons/green-dot.png'
+            icon: icon
         };
 
         marker = new google.maps.Marker(markerOptions);
-        this.markers.push(marker); // add marker to array
+        FindLocationMapFactory.instance.markers.push(marker); // add marker to array
         
         google.maps.event.addListener(marker, 'click', function () {
             // close window if not undefined
@@ -59,23 +58,18 @@ class FindLocationMapFactory {
             };
             
             infoWindow = new google.maps.InfoWindow(infoWindowOptions);
-            infoWindow.open(map, marker);
+            infoWindow.open(FindLocationMapFactory.instance.map, marker);
         });
     }
 
     static FindLocationMapFactoryInstance() {
-        return new FindLocationMapFactory();
+        FindLocationMapFactory.instance = new FindLocationMapFactory();
+        return FindLocationMapFactory.instance;
     }
-
-
 }
 
-FindLocationMapFactory.FindLocationMapFactoryInstance.$inject = [];
+angular.module(moduleName, [])
 
-angular.module(moduleName, [
-    
-])
-
-.factory('findLocationMapFactory', FindLocationMapFactory.FindLocationMapFactoryInstance);
+    .factory('findLocationMapFactory', FindLocationMapFactory.FindLocationMapFactoryInstance);
 
 export default moduleName;

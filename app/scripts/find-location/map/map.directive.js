@@ -1,40 +1,36 @@
-import { default as GoogleMapAppFindLocationMapFactory } from './map.factory';
+import { default as GoogleMapAppFindLocationMap } from './map.factory';
 
 const moduleName = 'GoogleMapApp.findLocation.mapdirective';
 const MAPFACTORY = new WeakMap();
 
 class FindLocationMapDirective {
 
-    constructor($scope, $stateParams, $state, findLocationMapFactory) {
-    	
+    constructor(findLocationMapFactory) {
     	this.restrict = 'A';
         this.replace = 'true';
         this.template = '<div class="gmaps"></div>';
 
-        MAPFACTORY.set(this, findLocationMapFactory);
-
+        this.mapfactory = findLocationMapFactory;
     }
 
     // directive link function
 	link(scope, element, attrs) {
-
-        MAPFACTORY.get(this).initMap(element[0]);         
-
+        FindLocationMapDirective.instance.mapfactory.initMap(element[0]);
 	};
-	    
-	static directiveFactory(){
-        FindLocationMapDirective.instance = new FindLocationMapDirective();
+
+	static directiveFactory(findLocationMapFactory){
+        FindLocationMapDirective.instance = new FindLocationMapDirective(findLocationMapFactory);
         return FindLocationMapDirective.instance;
     }
 
 }
 
-FindLocationMapDirective.$inject = ['$scope', '$stateParams', '$state', 'findLocationMapFactory'];
+FindLocationMapDirective.$inject = ['findLocationMapFactory'];
 
 angular.module(moduleName, [
-    GoogleMapAppFindLocationMapFactory
+    GoogleMapAppFindLocationMap
 ])
-    .directive('findLocationMapDirective', FindLocationMapDirective.directiveFactory);
+    .directive('findLocationMapDirective', FindLocationMapDirective.directiveFactory)
 
     ;
 

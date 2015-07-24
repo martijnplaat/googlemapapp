@@ -6,7 +6,7 @@ const CONFIG = new WeakMap();
 
 class FindLocationFilterController {
 
-    constructor($rootScope, $stateParams, $state, config) {
+    constructor($rootScope, config) {
         ROOTSCOPE.set(this, $rootScope);
         CONFIG.set(this, config);
     }
@@ -21,7 +21,7 @@ class FindLocationFilterController {
 
 }
 
-FindLocationFilterController.$inject = ['$rootScope', '$stateParams', '$state', 'config'];
+FindLocationFilterController.$inject = ['$rootScope', 'config'];
 
 angular.module(moduleName, [
     GoogleMapAppConfig
