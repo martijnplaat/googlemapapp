@@ -21,8 +21,10 @@ class FindLocationSearchController {
     }
 
     selectedItemChange(item) {
-        let newPosition = new google.maps.LatLng(item.lat, item.lng);
-        MAPFACTORY.get(this).setMarker(newPosition, 'MyDestination', item.name, 'https://maps.google.com/mapfiles/ms/icons/blue-dot.png');
+        if(item.lat !== undefined && item.lng !== undefined) {
+            let newPosition = new google.maps.LatLng(item.lat, item.lng);
+            MAPFACTORY.get(this).setMarker(newPosition, 'MyDestination', item.name, 'https://maps.google.com/mapfiles/ms/icons/blue-dot.png');    
+        }    
     }
 
     querySearch(destinationAddress) {

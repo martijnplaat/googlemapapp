@@ -1,7 +1,6 @@
 import { default as GoogleMapAppFindLocationMap } from './map.factory';
 
 const moduleName = 'GoogleMapApp.findLocation.mapdirective';
-const MAPFACTORY = new WeakMap();
 
 class FindLocationMapDirective {
 
@@ -30,7 +29,7 @@ FindLocationMapDirective.$inject = ['findLocationMapFactory'];
 angular.module(moduleName, [
     GoogleMapAppFindLocationMap
 ])
-    .directive('findLocationMapDirective', FindLocationMapDirective.directiveFactory)
+    .directive('findLocationMapDirective', ['findLocationMapFactory', FindLocationMapDirective.directiveFactory])
 
     ;
 

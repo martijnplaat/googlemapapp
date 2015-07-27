@@ -149,7 +149,6 @@ var _mapFactory = require('./map.factory');
 var _mapFactory2 = _interopRequireDefault(_mapFactory);
 
 var moduleName = 'GoogleMapApp.findLocation.mapdirective';
-var MAPFACTORY = new WeakMap();
 
 var FindLocationMapDirective = (function () {
     function FindLocationMapDirective(findLocationMapFactory) {
@@ -182,7 +181,7 @@ var FindLocationMapDirective = (function () {
 
 FindLocationMapDirective.$inject = ['findLocationMapFactory'];
 
-angular.module(moduleName, [_mapFactory2['default']]).directive('findLocationMapDirective', FindLocationMapDirective.directiveFactory);
+angular.module(moduleName, [_mapFactory2['default']]).directive('findLocationMapDirective', ['findLocationMapFactory', FindLocationMapDirective.directiveFactory]);
 
 exports['default'] = moduleName;
 module.exports = exports['default'];
@@ -390,8 +389,10 @@ var FindLocationSearchController = (function () {
     _createClass(FindLocationSearchController, [{
         key: 'selectedItemChange',
         value: function selectedItemChange(item) {
-            var newPosition = new google.maps.LatLng(item.lat, item.lng);
-            MAPFACTORY.get(this).setMarker(newPosition, 'MyDestination', item.name, 'https://maps.google.com/mapfiles/ms/icons/blue-dot.png');
+            if (item.lat !== undefined && item.lng !== undefined) {
+                var newPosition = new google.maps.LatLng(item.lat, item.lng);
+                MAPFACTORY.get(this).setMarker(newPosition, 'MyDestination', item.name, 'https://maps.google.com/mapfiles/ms/icons/blue-dot.png');
+            }
         }
     }, {
         key: 'querySearch',
