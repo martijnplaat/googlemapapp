@@ -35,6 +35,8 @@ class FindLocationSearchController {
     	if(this.filtertype !== null && destinationAddress !== '') {
     		API.get(this).getlocations(this.filtertype, destinationAddress)
     		.then( (response) => {
+                                console.log("uitkomst:"+response);
+
     			deferred.resolve(response.data.locations);
     		})
     		.catch( (response) => {

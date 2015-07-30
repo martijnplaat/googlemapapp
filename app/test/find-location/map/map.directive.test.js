@@ -1,6 +1,6 @@
 'use strict';
 
-describe("use case: show a google map and detect the current position on the map", function() {
+describe("use case: show a google map", function() {
 
 	var $rootScope, $compile, element;
 

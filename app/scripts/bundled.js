@@ -221,13 +221,21 @@ var FindLocationMapFactory = (function () {
             };
 
             if (FindLocationMapFactory.instance.map === void 0) {
+
                 FindLocationMapFactory.instance.map = new google.maps.Map(activeElement, mapOptions);
+
                 navigator.geolocation.getCurrentPosition(FindLocationMapFactory.instance.currentPosition);
             }
         }
     }, {
+        key: 'getMarkers',
+        value: function getMarkers() {
+            return this.markers;
+        }
+    }, {
         key: 'currentPosition',
         value: function currentPosition(position) {
+
             var lat = position.coords.latitude;
             var lon = position.coords.longitude;
             var newPosition = new google.maps.LatLng(lat, lon);
@@ -251,7 +259,7 @@ var FindLocationMapFactory = (function () {
             };
 
             marker = new google.maps.Marker(markerOptions);
-            FindLocationMapFactory.instance.markers.push(marker); // add marker to array
+            FindLocationMapFactory.instance.markers.push(marker.title); // add marker to array
 
             google.maps.event.addListener(marker, 'click', function () {
                 // close window if not undefined
@@ -403,6 +411,8 @@ var FindLocationSearchController = (function () {
             this.filtertype = ROOTSCOPE.get(this).selectedFilterType;
             if (this.filtertype !== null && destinationAddress !== '') {
                 API.get(this).getlocations(this.filtertype, destinationAddress).then(function (response) {
+                    console.log('uitkomst:' + response);
+
                     deferred.resolve(response.data.locations);
                 })['catch'](function (response) {
                     var resp = [{ 'name': response.data }];

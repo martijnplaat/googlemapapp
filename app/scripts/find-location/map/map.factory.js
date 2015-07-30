@@ -18,12 +18,20 @@ class FindLocationMapFactory {
         };
 
         if (FindLocationMapFactory.instance.map === void 0) {
+
             FindLocationMapFactory.instance.map = new google.maps.Map(activeElement, mapOptions);
+
             navigator.geolocation.getCurrentPosition(FindLocationMapFactory.instance.currentPosition);
+
         }
     }
 
+    getMarkers() {
+        return this.markers;
+    }
+
     currentPosition(position) {
+
         let lat = position.coords.latitude;
         let lon = position.coords.longitude;
         let newPosition = new google.maps.LatLng(lat, lon);
@@ -44,7 +52,7 @@ class FindLocationMapFactory {
         };
 
         marker = new google.maps.Marker(markerOptions);
-        FindLocationMapFactory.instance.markers.push(marker); // add marker to array
+        FindLocationMapFactory.instance.markers.push(marker.title); // add marker to array
         
         google.maps.event.addListener(marker, 'click', function () {
             // close window if not undefined
