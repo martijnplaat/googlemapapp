@@ -18,6 +18,9 @@ var gulp =  require('gulp'),
     rename = require('gulp-rename')
 ;
 
+var Server = require('karma').Server;
+
+
 // ----------------------------------------
 // General
 // ----------------------------------------
@@ -113,7 +116,7 @@ gulp.task('prod', ['prodpipe'], function() {
 // Development
 // ----------------------------------------
 
-gulp.task('dev', ['devpipe', 'jshint', 'csslint', 'watch'], function() {
+gulp.task('dev', ['devpipe', 'jshint', 'csslint', 'watch', 'test'], function() {
     return gulp.src('./')
         .pipe(webserver({
             livereload: true
@@ -150,12 +153,9 @@ gulp.task('dev', ['devpipe', 'jshint', 'csslint', 'watch'], function() {
 // Test
 // ----------------------------------------
 
-gulp.task('test', function() {
-    return gulp.src('./test')
-        .pipe(karma({
-            configFile: 'test/karma.conf.js',
-            action: 'watch'
-        })).on('error', function(err) {
-            this.emit('end'); //instead of erroring the stream, end it
-        });
+gulp.task('test', function(done) {
+    new Server({
+        configFile: __dirname + '/test/karma.conf.js',
+        singleRun: true
+    }, done).start();
 });
